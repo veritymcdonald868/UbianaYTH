@@ -9,7 +9,6 @@ import numpy as np
 import pytube
 import requests
 from processing_whisper import WhisperPrePostProcessor
-from transformers.models.whisper.tokenization_whisper import TO_LANGUAGE_CODE
 from transformers.pipelines.audio_utils import ffmpeg_read
 
 
@@ -47,8 +46,6 @@ def inference(inputs, task=None, return_timestamps=False):
         text = data["text"]
     else:
         text = data["detail"]
-
-    timestamps = data.get("chunks")
     if timestamps is not None:
         timestamps = [
             f"[{format_timestamp(chunk['timestamp'][0])} -> {format_timestamp(chunk['timestamp'][1])}] {chunk['text']}"
@@ -146,8 +143,6 @@ if __name__ == "__main__":
             raise gr.Error(
                 f"File size exceeds file size limit. Got file of size {file_size_mb:.2f}MB for a limit of {FILE_LIMIT_MB}MB."
             )
-
-        with open(inputs, "rb") as f:
             inputs = f.read()
 
         inputs = ffmpeg_read(inputs, processor.feature_extractor.sampling_rate)
